@@ -1,0 +1,19 @@
+{
+  "jurisdiction": "example_second_city",
+  "source": "synthetic_permits",
+  "endpoint": null,
+  "key": "case_number",
+  "building_type_field": "use",
+  "residential_values": ["Residential"],
+  "fields": {
+    "permit_id": "case_number",
+    "applied_date": "submitted",
+    "issued_date": "approved",
+    "completed_date": "finaled",
+    "units_added": "homes_created",
+    "units_removed": "homes_removed",
+    "estimated_cost": "valuation",
+    "status": "state"
+  },
+  "fixture": "fixtures/second_city.jsonl"
+}

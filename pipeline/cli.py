@@ -1,4 +1,4 @@
-"""Run stages directly or let Airflow orchestrate the same commands."""
+"""Run standalone extraction, validation, transformation, and publication commands."""
 import argparse
 import json
 import sys

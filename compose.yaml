@@ -9,31 +9,10 @@ x-runtime: &runtime
   volumes:
     - .:/opt/project
     - ./data:/data
-  environment: &runtime-env
+  environment:
     PYTHONPATH: /opt/project
     DATA_DIR: /data
     SPARK_LOCAL_IP: 127.0.0.1
-
-x-airflow: &airflow
-  <<: *runtime
-  build:
-    context: .
-    target: airflow
-  image: spark-pipeline-test:airflow
-  profiles: [airflow]
-  environment: &airflow-env
-    <<: *runtime-env
-    AIRFLOW__CORE__EXECUTOR: LocalExecutor
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__DAGS_FOLDER: /opt/project/dags
-    AIRFLOW__CORE__PARALLELISM: '2'
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-    AIRFLOW__WEBSERVER__SECRET_KEY: local-learning-only-change-before-sharing
-  volumes:
-    - .:/opt/project
-    - ./data:/data
-    - airflow-logs:/opt/airflow/logs
 
 services:
   pipeline:
@@ -46,49 +25,3 @@ services:
     <<: *runtime
     entrypoint: [streamlit, run, dashboard/app.py, --server.address, 0.0.0.0, --server.headless, "true", --browser.gatherUsageStats, "false"]
     ports: ['127.0.0.1:8501:8501']
-
-  postgres:
-    profiles: [airflow]
-    image: postgres:16.6
-    environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
-    volumes: [airflow-db:/var/lib/postgresql/data]
-    healthcheck:
-      test: [CMD-SHELL, 'pg_isready -U airflow']
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  airflow-init:
-    <<: *airflow
-    environment:
-      <<: *airflow-env
-      _AIRFLOW_DB_MIGRATE: 'true'
-      _AIRFLOW_WWW_USER_CREATE: 'true'
-      _AIRFLOW_WWW_USER_USERNAME: airflow
-      _AIRFLOW_WWW_USER_PASSWORD: airflow
-    command: version
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  airflow-scheduler:
-    <<: *airflow
-    command: scheduler
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
-
-  airflow-webserver:
-    <<: *airflow
-    command: webserver
-    ports: ['127.0.0.1:8080:8080']
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
-
-volumes:
-  airflow-db:
-  airflow-logs:

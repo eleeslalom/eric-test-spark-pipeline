@@ -14,9 +14,8 @@ Monthly measures count events by their own dates. An application and an issuance
 
 1. **Source verification:** independently inspect the local runtime, Seattle schema, and completion-source grain. Record gaps rather than infer dates.
 2. **Standalone MVP:** extraction, fixture-driven Spark work, and dashboard scaffolding can proceed together after agreeing on the normalized contract. Integrate them into a single manual run and verify repeatability and failed-publication recovery.
-3. **Optional Airflow:** add metadata PostgreSQL and an orchestration service. Tasks invoke the existing CLI stages. Schedule at 06:00 America/Los_Angeles with one active run; the computer and Docker must be running.
-4. **Housing and economic enrichment:** completion reconciliation, FRED ingestion, and fixture-driven dashboard views can proceed independently. Integrate only after join-cardinality and monthly-alignment checks.
-5. **Extensibility:** the synthetic second jurisdiction proves mapping and identifier separation; commercial records prove that processing does not require residential units. It is a contract demonstration, not a verified live second-city integration.
+3. **Housing and economic enrichment:** completion reconciliation, FRED ingestion, and fixture-driven dashboard views can proceed independently. Integrate only after join-cardinality and monthly-alignment checks.
+4. **Extensibility:** the synthetic second jurisdiction proves mapping and identifier separation; commercial records prove that processing does not require residential units. It is a contract demonstration, not a verified live second-city integration.
 
 ## Completion data and comparisons
 
@@ -26,4 +25,6 @@ Mortgage-rate comparisons show associations, not causal findings. Potential supp
 
 ## Operational limits
 
-This is a local educational system, not a production service. Full snapshots capture revisions to older permits but will eventually need retention and extraction-cost controls. Spark runs inside the task container rather than a dedicated cluster. Data stored under a OneDrive-managed folder can be affected by synchronization, eviction, or concurrent edits; keep Docker volumes and large data on a local nonsynced disk when possible.
+This is a local educational system, not a production service. Full snapshots capture revisions to older permits but will eventually need retention and extraction-cost controls. Spark runs inside the task container rather than a dedicated cluster. Data stored under a OneDrive-managed folder can be affected by synchronization, eviction, or concurrent edits; keep large data on a local nonsynced disk when possible.
+
+Refreshes are manual; no scheduler or automatic refresh service is included.

@@ -1,27 +1,11 @@
 name: spark-pipeline-test
 
-x-runtime: &runtime
-  build:
-    context: .
-    target: runtime
-  image: spark-pipeline-test:local
-  working_dir: /opt/project
-  volumes:
-    - .:/opt/project
-    - ./data:/data
-  environment:
-    PYTHONPATH: /opt/project
-    DATA_DIR: /data
-    SPARK_LOCAL_IP: 127.0.0.1
-
 services:
-  pipeline:
-    <<: *runtime
-    profiles: [tools]
-    entrypoint: [python, -m, pipeline.cli]
-    command: [run, --config, configs/seattle.json, --run-id, manual, --data-dir, /data]
-
-  dashboard:
-    <<: *runtime
-    entrypoint: [streamlit, run, dashboard/app.py, --server.address, 0.0.0.0, --server.headless, "true", --browser.gatherUsageStats, "false"]
-    ports: ['127.0.0.1:8501:8501']
+  spark-job:
+    build: .
+    working_dir: /opt/project
+    volumes:
+      - ./jobs:/opt/project/jobs
+    environment:
+      SPARK_LOCAL_IP: 127.0.0.1
+    command: [spark-submit, jobs/main.py]
